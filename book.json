@@ -1,0 +1,109 @@
+{
+  "status": "success",
+  "code": 200,
+  "message": "Data berhasil di tampilkan",
+  "data": [
+    {
+      "EstateID": "CCFE3CA1-E76A-47B9-BB91-0584CCBA2F23",
+      "EstateCode": "SG",
+      "EstateName": "Seunagan",
+      "GroupName": "Group I",
+      "CommodityID": "E26856F4-7551-4E93-A163-9A3E1507439E",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "DEAF5C96-7EE1-43C8-9A6A-13C4B76EDC17",
+      "EstateCode": "NL",
+      "EstateName": "Negeri Lama",
+      "GroupName": "Group III",
+      "CommodityID": "1D85E4B3-DA19-4FA9-AC4E-3AB1E6D9E89E",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "0557B3E2-B268-4DCC-8EA5-48994C28878D",
+      "EstateCode": "SL",
+      "EstateName": "Sei Liput",
+      "GroupName": "Group I",
+      "CommodityID": "C723B70C-B7A8-4816-A44F-2201924EEE56",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "C1CFE70B-5CD4-419A-B5E7-76358B16EE14",
+      "EstateCode": "BB",
+      "EstateName": "Bangun Bandar",
+      "GroupName": "Group II",
+      "CommodityID": "93BCB4D0-FD68-45A4-9300-1600176F2C95",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "D60334A7-6AD6-47CD-B7DA-82391CD2475B",
+      "EstateCode": "SY",
+      "EstateName": "Seumanyam",
+      "GroupName": "Group I",
+      "CommodityID": "C62D2222-D972-4FD4-BE1A-416E3AC9401C",
+      "CommodityName": "Kelapa sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "1CC0C388-41D3-450C-8561-A1D0B0C805AE",
+      "EstateCode": "TG",
+      "EstateName": "Tanah Gambus",
+      "GroupName": "Group II",
+      "CommodityID": "9A9492E8-2D56-447A-AF5A-227AF59AAF08",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "DDD4D637-56B8-414A-ACCA-C009685BE084",
+      "EstateCode": "TB",
+      "EstateName": "Tanah Besih",
+      "GroupName": "Group II",
+      "CommodityID": "ECB7D670-DF94-4F29-93FA-EC584FE81881",
+      "CommodityName": "Karet",
+      "StandardPruningFrequency": "0"
+    },
+    {
+      "EstateID": "78662F28-ACCD-49E8-A2A3-C34728B96E04",
+      "EstateCode": "LB",
+      "EstateName": "Lae Butar",
+      "GroupName": "Group I",
+      "CommodityID": "FCCFEC1D-6066-44D6-A875-DD2F47EB33A8",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "8F54AB13-F946-42DF-98A8-D46DFAD67395",
+      "EstateCode": "AP",
+      "EstateName": "Aek Pamienke",
+      "GroupName": "Group III",
+      "CommodityID": "582AD2D7-F4CF-42C9-9941-1B9BE13A060F",
+      "CommodityName": "Karet",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "BBBC7F2E-E478-47D1-A9B7-DC4A479ABA65",
+      "EstateCode": "AL",
+      "EstateName": "Aek Loba",
+      "GroupName": "Group III",
+      "CommodityID": "E5FFD80F-DC18-4EB8-832D-A390B9888091",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    },
+    {
+      "EstateID": "E7E731CD-BDDD-4B73-A947-F5AFCD0CB1E4",
+      "EstateCode": "MP",
+      "EstateName": "Mata Pao",
+      "GroupName": "Group II",
+      "CommodityID": "2CE327DA-EF07-467C-8B27-D728755D4467",
+      "CommodityName": "Kelapa Sawit",
+      "StandardPruningFrequency": "9"
+    }
+  ],
+  "totalData": 11,
+  "executionTime": "2026-05-09 11:19:00",
+  "processingTime": "2.760653s"
+}
