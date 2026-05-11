@@ -239,15 +239,24 @@ void main(List<String> arguments) async {
 
 void _printUsage() {
   print('╔══════════════════════════════════════════════════╗');
-  print('║   🚀 FLUTTER ENGINE-X (FEX)                      ║');
+  print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.0               ║');
   print('║   The Intelligence Layer for Flutter             ║');
   print('╚══════════════════════════════════════════════════╝');
-  print('\nUsage:');
+  print('\n🎯 CORE COMMANDS:');
+  print('  fex review            # AI Team Simulation (QA/Security/Arch)');
+  print('  fex evolve            # Architecture Migration Engine');
   print('  fex pentest           # (Z3) Security Analysis');
-  print('  fex qa                # (Z5) AI QA Analysis');
-  print('  fex heal --file <p>   # (HEAL) Auto-Refactor Code');
-  print('  fex ui --type login   # Generate Premium UI');
+  print('  fex qa                # (Z5) Autonomous QA');
+  print('\n🩹 MAINTENANCE & DEBUGGING:');
+  print('  fex heal --file <p>   # Self-Healing Refactoring');
+  print('  fex log               # Inject VS Code Live Inspector');
+  print('  fex doctor            # Dependency Intelligence');
+  print('  fex perf              # Runtime Performance Advisor');
+  print('\n📁 GENERATORS:');
   print('  fex generate crud     # Multi-State Feature Gen');
-  print('  fex audit             # Static Code Audit');
-  print('  fex mock              # Local Mock Server');
+  print('  fex ui --type <type>  # Premium UI Scaffold');
+  print('  fex localize          # AI Semantic Localization');
+  print('\n💡 Options:');
+  print('  --version             # Show FEX version');
+  print('  --help                # Show this help');
 }

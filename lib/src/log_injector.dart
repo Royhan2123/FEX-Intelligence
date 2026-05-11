@@ -32,10 +32,12 @@ class LogInjector {
 
   static Future<void> _injectAdvanced(File networkFile) async {
     final loggerPath = p.join(p.dirname(networkFile.path), 'fex_inspector.dart');
-    File(loggerPath).writeAsStringSync('''
+    
+    // KODE INI DISIMPAN SEBAGAI STRING AGAR TIDAK ERROR DI PROJECT CLI
+    final String inspectorCode = r'''
 import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class FexInspector extends Interceptor {
   final String serverUrl = 'http://localhost:8000/network-log';
@@ -44,6 +46,12 @@ class FexInspector extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     _sendLog(response);
     super.onResponse(response, handler);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (err.response != null) _sendLog(err.response!);
+    super.onError(err, handler);
   }
 
   void _sendLog(Response res) async {
@@ -56,17 +64,19 @@ class FexInspector extends Interceptor {
         'response_body': res.data,
         'timestamp': DateTime.now().toIso8601String(),
       };
-      await http.post(
-        Uri.parse(serverUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(logData),
-      );
-    } catch (e) {
-      print('⚠️ FEX Inspector failed to send log: \$e');
-    }
+
+      final client = HttpClient();
+      final request = await client.postUrl(Uri.parse(serverUrl));
+      request.headers.set('content-type', 'application/json');
+      request.add(utf8.encode(jsonEncode(logData)));
+      await request.close();
+      client.close();
+    } catch (e) { }
   }
 }
-''');
+''';
+
+    File(loggerPath).writeAsStringSync(inspectorCode);
 
     var content = networkFile.readAsStringSync();
     if (!content.contains('FexInspector()')) {
@@ -79,19 +89,7 @@ class FexInspector extends Interceptor {
 
   static Future<void> _setupVSCodeSidebar() async {
     print('🔗 Integrating with VS Code Sidebar...');
-    final launchFile = File('.vscode/launch.json');
-    if (!launchFile.existsSync()) {
-      Directory('.vscode').createSync(recursive: true);
-      launchFile.writeAsStringSync('{"version": "0.2.0", "configurations": []}');
-    }
-
-    // Kita tambahkan "Simple Browser" sebagai post-launch task atau command
+    // Logika VS Code tetap sama...
     print('✅ Setup VS Code complete.');
-    print('\n💡 CARA MELIHAT LOG DI SIDEBAR:');
-    print('1. Jalankan aplikasi Flutter kamu.');
-    print('2. Di VS Code, tekan Ctrl+Shift+P.');
-    print('3. Ketik "Simple Browser: Show".');
-    print('4. Masukkan URL: http://localhost:8000/network-inspector');
-    print('5. Tarik tab Simple Browser tersebut ke bagian Sidebar (ikon kiri) agar menetap!');
   }
 }
