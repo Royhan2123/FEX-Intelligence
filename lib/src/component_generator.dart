@@ -218,7 +218,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 ''';
 
   static String _loginStyle2() => '''
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -229,52 +228,39 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _isHovered = false;
+  final _formKey = GlobalKey<FormState>();
+  bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
-      body: Stack(
-        children: [
-          // Background Glows
-          Positioned(top: -150, left: -50, child: _glowCircle(300, Colors.deepPurple.withOpacity(0.5))),
-          Positioned(bottom: -100, right: -50, child: _glowCircle(250, Colors.blueAccent.withOpacity(0.4))),
-          
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+      backgroundColor: const Color(0xFF0F172A), // Deep Slate
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(color: Colors.indigoAccent, borderRadius: BorderRadius.circular(16)),
+                child: const Icon(Icons.shield_outlined, color: Colors.white, size: 32),
+              ),
+              const SizedBox(height: 32),
+              const Text('Enterprise Portal', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800, letterSpacing: -1)),
+              const Text('Sign in to access your dashboard', style: TextStyle(color: Colors.white60, fontSize: 16)),
+              const SizedBox(height: 48),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _inp('Email Address', Icons.mail_outline),
+                    const SizedBox(height: 20),
+                    _inp('Password', Icons.lock_outline, isPass: true),
+                    const SizedBox(height: 12),
+                    Row(
                       children: [
-                        const Icon(Icons.security, size: 80, color: Colors.cyanAccent),
-                        const SizedBox(height: 24),
-                        const Text('NEURAL ACCESS', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4)),
-                        const SizedBox(height: 40),
-                        _neonInput('Encrypted ID', Icons.fingerprint),
-                        const SizedBox(height: 20),
-                        _neonInput('Security Code', Icons.vibration, isPass: true),
-                        const SizedBox(height: 40),
-                        _neonButton(),
-                        const SizedBox(height: 30),
-                        const Row(children: [Expanded(child: Divider(color: Colors.white10)), Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: Text('BYPASS WITH', style: TextStyle(color: Colors.white30, fontSize: 10))), Expanded(child: Divider(color: Colors.white10))]),
-                        const SizedBox(height: 24),
-                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          _miniNeonBtn(Icons.alternate_email),
-                          const SizedBox(width: 15),
-                          _miniNeonBtn(Icons.hub),
                           const SizedBox(width: 15),
                           _miniNeonBtn(Icons.terminal),
                         ]),
@@ -485,7 +471,6 @@ class _RegisterPageState extends State<RegisterPage> {
 ''';
 
   static String _registerStyle2() => '''
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -494,39 +479,60 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A),
-      body: Stack(
-        children: [
-          Positioned(top: -50, right: -50, child: Container(width: 200, height: 200, decoration: const BoxDecoration(color: Colors.cyanAccent, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.cyanAccent, blurRadius: 100)]))),
-          BackdropFilter(filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), child: Container(color: Colors.transparent)),
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30),
-              child: Container(
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.white.withOpacity(0.1))),
-                child: Column(
-                  children: [
-                    const Text('JOIN MATRIX', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4)),
-                    const SizedBox(height: 40),
-                    _neonInp('User Alias', Icons.face),
-                    const SizedBox(height: 20),
-                    _neonInp('Neural Link (Email)', Icons.alternate_email),
-                    const SizedBox(height: 20),
-                    _neonInp('Access Key', Icons.key, isPass: true),
-                    const SizedBox(height: 40),
-                    _btn(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+      backgroundColor: const Color(0xFF0F172A),
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, foregroundColor: Colors.white),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Create Account', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('Join the enterprise network', style: TextStyle(color: Colors.white60, fontSize: 16)),
+            const SizedBox(height: 48),
+            _inp('Full Name', Icons.person_outline),
+            const SizedBox(height: 20),
+            _inp('Work Email', Icons.business_outlined),
+            const SizedBox(height: 20),
+            _inp('Password', Icons.lock_outline, isPass: true),
+            const SizedBox(height: 40),
+            _btn(),
+            const SizedBox(height: 32),
+            const Row(children: [Expanded(child: Divider(color: Colors.white12)), Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('OR', style: TextStyle(color: Colors.white24))), Expanded(child: Divider(color: Colors.white12))]),
+            const SizedBox(height: 32),
+            _socialRow(),
+          ],
+        ),
       ),
     );
   }
-  Widget _neonInp(String h, IconData i, {bool isPass = false}) => TextField(obscureText: isPass, style: const TextStyle(color: Colors.cyanAccent), decoration: InputDecoration(hintText: h, hintStyle: const TextStyle(color: Colors.white24), prefixIcon: Icon(i, color: Colors.cyanAccent), border: InputBorder.none, filled: true, fillColor: Colors.black26));
-  Widget _btn() => Container(width: double.infinity, height: 60, decoration: BoxDecoration(border: Border.all(color: Colors.cyanAccent), borderRadius: BorderRadius.circular(15)), child: const Center(child: Text('REGISTER', style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold))));
+
+  Widget _inp(String l, IconData i, {bool isPass = false}) => TextField(
+    obscureText: isPass,
+    style: const TextStyle(color: Colors.white),
+    decoration: InputDecoration(
+      labelText: l,
+      labelStyle: const TextStyle(color: Colors.white60),
+      prefixIcon: Icon(i, color: Colors.white38),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.05),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+    ),
+  );
+
+  Widget _btn() => SizedBox(
+    width: double.infinity,
+    height: 60,
+    child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: Colors.indigoAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))), child: const Text('GET STARTED', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+  );
+
+  Widget _socialRow() => Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+    _sBtn(Icons.g_mobiledata, Colors.red),
+    const SizedBox(width: 20),
+    _sBtn(Icons.apple, Colors.white),
+  ]);
+
+  Widget _sBtn(IconData i, Color c) => Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(border: Border.all(color: Colors.white12), borderRadius: BorderRadius.circular(16)), child: Icon(i, color: c, size: 32));
 }
 ''';
 
