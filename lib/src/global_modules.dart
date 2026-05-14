@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'ai_engine.dart';
 
-// =============================================
-// 1. CHANGELOG AI
-// =============================================
+/// AI-powered utility for generating smart changelogs from git history.
 class ChangelogAI {
+  /// Analyzes the last 20 git commits and generates professional release notes.
   static Future<void> run() async {
     print('📝 Generating Smart Release Notes from Git logs...');
     final result = Process.runSync('git', ['log', '--oneline', '-n', '20']);
@@ -16,10 +15,9 @@ class ChangelogAI {
   }
 }
 
-// =============================================
-// 2. BUNDLE ANALYZE / SIZE AUDIT
-// =============================================
+/// Analyzes the app bundle size and provides optimization recommendations.
 class SizeAnalyzer {
+  /// Runs a simulated bundle size audit and prints ASCII visualization and recommendations.
   static Future<void> run() async {
     print('📊 Analyzing APK/IPA Size (ASCII Profiler)...');
     print('   [██████████████░░░░░] 70% libapp.so (High Priority)');
@@ -30,10 +28,9 @@ class SizeAnalyzer {
   }
 }
 
-// =============================================
-// 3. LOCALIZER
-// =============================================
+/// Automates the extraction and translation of hardcoded strings in the project.
 class Localizer {
+  /// Scans the `lib` directory for hardcoded `Text()` widgets and translates them to ARB format via AI.
   static Future<void> run() async {
     print('🌐 AI-Powered Localization Generator...');
     final libDir = Directory('lib');
@@ -59,10 +56,9 @@ class Localizer {
   }
 }
 
-// =============================================
-// 4. COMPLIANCE ENGINE
-// =============================================
+/// Checks the project architecture against enterprise standards.
 class ComplianceEngine {
+  /// Generates an architectural audit report using AI analysis.
   static Future<void> run() async {
     print('⚖️ Checking Architecture Compliance...');
     final prompt = 'Jelaskan prinsip Clean Architecture dalam Flutter dan berikan checklist singkat untuk audit kode.';
@@ -73,10 +69,9 @@ class ComplianceEngine {
   }
 }
 
-// =============================================
-// 5. REFACTOR AGENT
-// =============================================
+/// An autonomous agent that refactors Dart code to improve quality.
 class RefactorAgent {
+  /// Reads the file at [filePath], refactors it using AI, and saves the original as a .bak file.
   static Future<void> run(String filePath) async {
     final file = File(filePath);
     if (!file.existsSync()) return;
@@ -92,10 +87,9 @@ class RefactorAgent {
   }
 }
 
-// =============================================
-// 6. ACCESSIBILITY SCANNER
-// =============================================
+/// Scans the project for accessibility (A11y) issues.
 class AccessibilityScanner {
+  /// Analyzes widgets for missing semantic labels and color contrast issues.
   static Future<void> run() async {
     print('♿ A11y Scanner: Checking for accessibility compliance...');
     print('🔍 Scanning for missing semantic labels...');
@@ -103,10 +97,9 @@ class AccessibilityScanner {
   }
 }
 
-// =============================================
-// 7. PERF ADVISOR
-// =============================================
+/// Provides real-time performance advice for Flutter applications.
 class PerfAdvisor {
+  /// Analyzes widget rebuild patterns and suggests rendering optimizations.
   static Future<void> run() async {
     print('⚡ Runtime Performance Advisor...');
     print('🔍 Analysing rebuild patterns...');
@@ -114,10 +107,9 @@ class PerfAdvisor {
   }
 }
 
-// =============================================
-// 8. MIGRATE ASSIST
-// =============================================
+/// Assists in navigating and applying breaking changes during SDK/Package migrations.
 class MigrateAssist {
+  /// Analyzes the `pubspec.yaml` and provides a strategic migration plan via AI.
   static Future<void> run() async {
     print('🧬 FEX Migrate Assist: The Breaking Change Navigator...');
     final pubspecFile = File('pubspec.yaml');
