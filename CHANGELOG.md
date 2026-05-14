@@ -1,4 +1,4 @@
-## [1.0.6] - 2026-05-14
+## [0.1.7] - 2026-05-14
 - Finalized global distribution setup.
 - Synced documentation portal with CLI features.
 - Improved AI engine reliability and error handling.
