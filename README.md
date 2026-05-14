@@ -1,68 +1,93 @@
-# 🚀 FLUTTER ENGINE-X (FEX)
-> **The AI-Powered Intelligence Layer for Modern Flutter Development**
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Royhan2123/flutter_cli_generate/main/assets/fex_banner.png" alt="FEX Intelligence Banner" width="800"/>
 
-Flutter Engine-X (FEX) is a production-grade development toolkit that bridges the gap between rapid prototyping and extreme software reliability. It doesn't just scaffold code; it orchestrates AI to audit, heal, and optimize your entire development lifecycle.
+  # 🚀 FEX Intelligence (Flutter Engine-X)
+  **The God-Level AI Toolkit for Modern Flutter Architectures**
 
----
+  [![Pub Version](https://img.shields.io/pub/v/fex_intelligence)](https://pub.dev/packages/fex_intelligence)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 💎 CORE INTELLIGENCE (GOD MODE)
-
-### 👥 AI Team Simulation (`fex review`)
-Spawn a virtual engineering team in your terminal. FEX simulates a **QA Engineer, Security Researcher, System Architect, and PM** to review your codebase from 4 critical perspectives simultaneously.
-
-### 🧬 Architecture Evolution (`fex evolve`)
-The ultimate migration engine. Automatically refactor your project's "soul" (e.g., from GetX to Riverpod) with semantic understanding. It rewrites controllers, providers, and injections while preserving business logic.
-
-### 🩹 Self-Healing Code (`fex heal`)
-FEX doesn't just find bugs—it performs surgery. Using LLM orchestration, it patches unhandled exceptions and refactors legacy patterns automatically.
-
-### 🕵️ Security Pentest (`fex pentest`)
-Autonomous security scanning that simulates cyber-attacks. Detects leaked secrets, insecure data storage, and network vulnerabilities before they reach production.
+  [Documentation](https://fex-docs.vercel.app/) • [Report Bug](https://github.com/Royhan2123/flutter_cli_generate/issues)
+</div>
 
 ---
 
-## 📡 LIVE DEBUGGING: FEX INSPECTOR
-FEX integrates a deep-level network inspector directly into your VS Code sidebar. 
-- **Real-time Monitoring**: See every GET, POST, PUT, DELETE as it happens.
-- **Deep Payload Inspection**: View full Request/Response bodies in a beautiful dark-mode UI.
-- **Zero Configuration**: Inject with one command (`fex log`).
+FEX (Flutter Engine-X) is an enterprise-grade CLI that bridges the gap between rapid prototyping and extreme software reliability. It doesn't just scaffold boilerplate code; it orchestrates AI to **audit, heal, evolve, and optimize** your entire development lifecycle.
+
+## 🌟 Why FEX?
+90% of CLIs stop at generating files. FEX continues where others end. With its integration to Google's Gemini AI, FEX acts as your virtual Senior Developer, Security Researcher, and QA Tester right inside your terminal.
 
 ---
 
-## ⌨️ COMMAND REFERENCE
+## ⚙️ Quick Start
 
-| Suite | Command | Purpose |
-|---|---|---|
-| **Core** | `fex review` | Run multi-agent AI team review |
-| | `fex evolve` | Migrate project architecture (e.g. GetX ➔ Riverpod) |
-| **Security** | `fex pentest` | Run Z3 Security Penetration Scan |
-| **QA** | `fex qa` | Run Z5 Autonomous QA Agent |
-| **Debug** | `fex log` | Inject VS Code Live Network Inspector |
-| | `fex heal` | Auto-fix/refactor specific code files |
-| **Perf** | `fex doctor` | Dependency intelligence (Abandoned packages check) |
-| | `fex perf` | Runtime performance & rebuild advisor |
-| **Gen** | `fex generate` | CRUD generation (Multi-State support) |
-| | `fex localize` | AI-driven semantic localization (.arb) |
+Install globally via pub.dev:
+```bash
+dart pub global activate fex_intelligence
+```
+
+Activate the AI Engine (Required for God-Level commands):
+```bash
+fex config --key YOUR_GEMINI_API_KEY
+```
 
 ---
 
-## 🚀 INSTALLATION & SETUP
+## 🧰 The FEX Arsenal (Command Reference)
 
-1. **Clone the FEX Intelligence Suite.**
-2. **Start the Brain (Python Backend):**
-   ```bash
-   cd rag-backend
-   python main.py
-   ```
-3. **Run FEX from your Flutter Project:**
-   ```bash
-   dart run path/to/fex/bin/flutter_cli_generate.dart [command]
-   ```
+FEX contains over 25+ powerful commands categorized by their impact.
+
+### 🧠 God-Level Intelligence
+| Command | Description |
+|---|---|
+| `fex review` | Spawns an AI Team (QA, Security, Architect, PM) to review your codebase. |
+| `fex evolve --from getx --to riverpod` | AI-driven architecture migration. Rewrites state management logic automatically. |
+| `fex refactor -f <file>` | Targets a specific file and autonomously patches bad code and smells. |
+| `fex compliance` | Scans codebase for architectural consistency and enterprise compliance. |
+
+### 🛡️ DevOps & Security
+| Command | Description |
+|---|---|
+| `fex log` | Injects the VS Code Live Network Inspector into your project. |
+| `fex pentest` | Autonomous Z3 security scanning to detect leaked secrets and weak HTTP rules. |
+| `fex qa` | Spawns a virtual QA Agent to analyze logical flaws. |
+| `fex cicd` | Automatically generates GitHub Actions / GitLab CI workflows. |
+| `fex release <patch/minor/major>` | Intelligent version bumping and changelog generation. |
+| `fex sign` | Automatically configures Android Keystore & App Signing. |
+| `fex env setup` | Sets up secure environment variables (.env). |
+
+### ⚡ Performance & Maintenance
+| Command | Description |
+|---|---|
+| `fex monitor` | Connects to Live Performance Surgeon. |
+| `fex optimize` | Scans and provides extreme runtime optimization tips. |
+| `fex doctor` | Checks dependency health (finds abandoned/deprecated packages). |
+| `fex perf` | Analyzes rendering and rebuild performance. |
+| `fex size` | App size analyzer to detect heavy assets/packages. |
+| `fex migrate` | Assists with Flutter SDK breaking changes migration. |
+
+### 🛠️ Generators & Automation
+| Command | Description |
+|---|---|
+| `fex init` | Bootstraps a fresh enterprise-ready Flutter project structure. |
+| `fex generate crud -n User` | Generates Repository, Service, Model, and Controller logic. |
+| `fex generate model -n User` | Generates Freezed/JsonSerializable models from JSON. |
+| `fex generate flavor init` | Automatically sets up dev/stag/prod flavors. |
+| `fex ui --type login` | Generates beautiful predefined UI screens. |
+| `fex l10n init` | Initializes App Localization support. |
+| `fex localize` | Uses AI to automatically translate `.arb` files to multiple languages. |
+| `fex figma --token <t> --file <f>`| Syncs Figma design tokens directly to Flutter themes. |
+| `fex asset sync` | Generates a safe R.dart class for all your assets. |
+| `fex deeplink check` | Validates your iOS/Android deep-link configurations. |
+| `fex rename` | Safely renames the entire Flutter package name and Android/iOS bundles. |
+| `fex permission` | Automatically adds necessary Android/iOS permissions. |
+| `fex icon` | Generates app icons from a single source image. |
+| `fex splash` | Generates a native splash screen. |
 
 ---
 
-## 🌍 GLOBAL COMPLIANCE
-FEX is built with the **European Accessibility Act (2025)** and **GDPR** in mind. Use `fex compliance` to ensure your app is ready for the global enterprise market.
+## 📖 Full Documentation
+To view interactive tutorials, the real-time terminal showcase, and advanced setup guides, visit the official **[FEX Documentation Portal](https://fex-docs.vercel.app/)**.
 
----
-**FEX: Not just a tool, but your AI Senior Partner.** 🚀🦾🔥🏆
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
