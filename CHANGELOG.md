@@ -1,3 +1,8 @@
+## [1.0.8] - 2026-05-14
+- Improved `fex init` to automatically run `flutter create` if no project exists.
+- Updated `main.dart` boilerplate to Material 3 with a professional starting UI.
+- Enhanced directory scaffolding for Clean Architecture.
+
 ## [1.0.7] - 2026-05-14
 - Finalized global distribution setup.
 - Synced documentation portal with CLI features.
