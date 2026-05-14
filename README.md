@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Royhan2123/flutter_cli_generate/main/assets/fex_banner.png" alt="FEX Intelligence Banner" width="800"/>
 
 # 🚀 FEX Intelligence (Flutter Engine-X)
 
@@ -8,7 +7,7 @@
 [![Pub Version](https://img.shields.io/pub/v/fex_intelligence)](https://pub.dev/packages/fex_intelligence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Documentation](https://fex-docs.vercel.app/) • [Report Bug](https://github.com/Royhan2123/flutter_cli_generate/issues)
+[Documentation](https://fex-intelligence.vercel.app/) • [Report Bug](https://github.com/Royhan2123/flutter_cli_generate/issues)
 
 </div>
 
