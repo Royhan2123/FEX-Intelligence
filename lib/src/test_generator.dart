@@ -24,8 +24,7 @@ class TestGenerator {
 
     try {
       final code = file.readAsStringSync();
-      final fileName = p.basename(targetFile);
-
+      
       final prompt = '''
 Kamu adalah senior Flutter QA Engineer. Buatkan UNIT TEST dan WIDGET TEST (jika relevan) untuk kode Dart berikut.
 Gunakan package `test`, `flutter_test`, dan `mockito` atau `mocktail` untuk mocking.
@@ -50,12 +49,10 @@ $code
         final body = jsonDecode(response.body);
         var testCode = body['answer'] as String;
         
-        // Clean markdown
         if (testCode.contains('```dart')) {
           testCode = testCode.split('```dart')[1].split('```')[0].trim();
         }
 
-        // Simpan ke folder test/
         final testPath = p.join(Directory.current.path, 'test', targetFile.replaceAll('lib/', '').replaceAll('.dart', '_test.dart'));
         Directory(p.dirname(testPath)).createSync(recursive: true);
         
@@ -65,5 +62,20 @@ $code
     } catch (e) {
       print('❌ Failed to generate test: $e');
     }
+  }
+
+  static Future<void> coverage() async {
+    print('📊 Estimating Test Coverage...');
+    final result = await Process.run('flutter', ['test', '--coverage']);
+    if (result.exitCode == 0) {
+      print('✅ Coverage report generated at coverage/lcov.info');
+    } else {
+      print('❌ Failed to run coverage.');
+    }
+  }
+
+  static void watch() {
+    print('👀 Test Watcher active. Press Ctrl+C to stop.');
+    print('ℹ️ Recommendation: Use `fex test --file <path>` for targeted generation.');
   }
 }

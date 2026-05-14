@@ -1,12 +1,19 @@
-name: flutter_cli_generate
-description: A new Flutter CLI tool.
-version: 1.0.0
+name: fex_intelligence
+description: "The AI-Powered Intelligence Layer for Flutter. FEX provides autonomous QA, security pentesting, self-healing code, and architecture evolution."
+version: 1.0.2+2
+homepage: https://github.com/yourusername/fex-engine
+repository: https://github.com/yourusername/fex-engine
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
+
+# Perintah yang diketik user di terminal
+executables:
+  fex: flutter_cli_generate
 
 dependencies:
   args: ^2.4.2
   path: ^1.8.3
   http: ^1.1.0
-  dio: ^5.9.2
+  dio: ^5.3.0
+  google_generative_ai: ^0.4.0

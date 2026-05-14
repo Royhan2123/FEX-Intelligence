@@ -17,9 +17,22 @@ import '../lib/src/next_level_modules.dart'; // GOD LEVEL MODULES
 import '../lib/src/evolve_engine.dart';      // EVOLVE ENGINE
 import '../lib/src/performance_surgeon.dart'; // PERFORMANCE & MONITOR
 import '../lib/src/log_injector.dart';      // LOG INJECTOR
+import '../lib/src/ai_engine.dart';         // STANDALONE AI
+import '../lib/src/model_generator.dart';    // MODEL GEN
+import '../lib/src/env_manager.dart';       // ENV
+import '../lib/src/flavor_generator.dart'; // FLAVOR
+import '../lib/src/asset_pipeline.dart';   // ASSET
+import '../lib/src/l10n_generator.dart';    // L10N
+import '../lib/src/figma_sync.dart';       // FIGMA
+import '../lib/src/release_generator.dart'; // RELEASE
+import '../lib/src/deeplink_validator.dart'; // DEEPLINK
 
 void main(List<String> arguments) async {
   final parser = ArgParser();
+
+  // --- COMMAND: CONFIGURATION ---
+  final configCommand = parser.addCommand('config');
+  configCommand.addOption('key', help: 'Set your Gemini API Key');
 
   // --- COMMAND: DEBUGGING & LOGGING ---
   parser.addCommand('log');
@@ -48,6 +61,30 @@ void main(List<String> arguments) async {
   parser.addCommand('perf');
   parser.addCommand('doctor');
 
+  // --- NEW COMMANDS FROM ROADMAP ---
+  final envCommand = parser.addCommand('env');
+  envCommand.addCommand('setup');
+  envCommand.addCommand('generate');
+
+  final l10nCommand = parser.addCommand('l10n');
+  l10nCommand.addCommand('init');
+  l10nCommand.addCommand('generate');
+
+  final assetCommand = parser.addCommand('asset');
+  assetCommand.addCommand('sync');
+
+  final figmaCommand = parser.addCommand('figma');
+  figmaCommand.addOption('token', help: 'Figma API Token');
+  figmaCommand.addOption('file', help: 'Figma File ID');
+
+  final releaseCommand = parser.addCommand('release');
+  releaseCommand.addCommand('patch');
+  releaseCommand.addCommand('minor');
+  releaseCommand.addCommand('major');
+
+  final deeplinkCommand = parser.addCommand('deeplink');
+  deeplinkCommand.addCommand('check');
+
   // --- COMMAND: TEST (AI TEST GENERATOR) ---
   final testCommand = parser.addCommand('test');
   testCommand.addOption('file', abbr: 'f', help: 'File to generate tests for');
@@ -72,8 +109,11 @@ void main(List<String> arguments) async {
 
   // --- COMMAND: GENERATE ---
   final generateCommand = parser.addCommand('generate');
-  generateCommand.addCommand('model');
-  generateCommand.addCommand('flavor');
+  final genModelCommand = generateCommand.addCommand('model');
+  genModelCommand.addOption('name', abbr: 'n', help: 'Class name');
+  genModelCommand.addOption('path', abbr: 'p', help: 'Path to JSON file', defaultsTo: 'data.json');
+  final genFlavorCommand = generateCommand.addCommand('flavor');
+  genFlavorCommand.addCommand('init');
   generateCommand.addCommand('ai');
   
   final crudCommand = generateCommand.addCommand('crud');
@@ -89,6 +129,16 @@ void main(List<String> arguments) async {
     final results = parser.parse(arguments);
 
     final ragUrl = 'http://localhost:8000';
+
+    if (results.command?.name == 'config') {
+      final key = results.command!['key'];
+      if (key != null) {
+        await AIEngine.saveKey(key);
+      } else {
+        print('Usage: fex config --key AIza...');
+      }
+      return;
+    }
 
     if (results.command?.name == 'log') {
       await LogInjector.run();
@@ -195,6 +245,48 @@ void main(List<String> arguments) async {
       return;
     }
 
+    // --- NEW COMMAND IMPLEMENTATIONS ---
+    if (results.command?.name == 'env') {
+      final envSub = results.command!.command;
+      if (envSub?.name == 'setup') await EnvManager.setup();
+      if (envSub?.name == 'generate') await EnvManager.generate();
+      return;
+    }
+
+    if (results.command?.name == 'l10n') {
+      final l10nSub = results.command!.command;
+      if (l10nSub?.name == 'init') await L10nGenerator.init(['en', 'id']);
+      if (l10nSub?.name == 'generate') await L10nGenerator.generate();
+      return;
+    }
+
+    if (results.command?.name == 'asset') {
+      if (results.command!.command?.name == 'sync') await AssetPipeline.sync();
+      return;
+    }
+
+    if (results.command?.name == 'figma') {
+      final token = results.command!['token'];
+      final fileId = results.command!['file'];
+      if (token != null && fileId != null) {
+        await FigmaSync.pull(token, fileId);
+      } else {
+        print('Usage: fex figma --token <T> --file <F>');
+      }
+      return;
+    }
+
+    if (results.command?.name == 'release') {
+      final type = results.command!.command?.name ?? 'patch';
+      await ReleaseGenerator.generate(type);
+      return;
+    }
+
+    if (results.command?.name == 'deeplink') {
+      if (results.command!.command?.name == 'check') await DeeplinkValidator.check();
+      return;
+    }
+
     if (results.command?.name == 'ui') {
       final type = results.command!['type'];
       if (type == 'login') await ComponentGenerator.generateLogin();
@@ -222,11 +314,30 @@ void main(List<String> arguments) async {
         final jsonFile = File(path);
         final jsonData = jsonDecode(jsonFile.readAsStringSync());
         await CrudGenerator.generate(name, jsonData, state);
+      } else if (genCommand?.name == 'model') {
+        final name = genCommand!['name'];
+        final path = genCommand['path'];
+
+        if (name == null) {
+          print('Error: --name is required for model generation');
+          exit(1);
+        }
+
+        final jsonFile = File(path);
+        if (!jsonFile.existsSync()) {
+          print('Error: JSON file not found at $path');
+          exit(1);
+        }
+        
+        final jsonData = jsonDecode(jsonFile.readAsStringSync());
+        await ModelGenerator.generate(name, jsonData);
       } else if (genCommand?.name == 'ai') {
         print('Enter RAG Backend URL (default: http://localhost:8000):');
         String? url = stdin.readLineSync();
         if (url == null || url.isEmpty) url = 'http://localhost:8000';
         await RagClientGenerator.generate(url);
+      } else if (genCommand?.name == 'flavor') {
+        if (genCommand!.command?.name == 'init') await FlavorGenerator.init();
       }
     } else {
       _printUsage();
@@ -254,7 +365,14 @@ void _printUsage() {
   print('  fex perf              # Runtime Performance Advisor');
   print('\n📁 GENERATORS:');
   print('  fex generate crud     # Multi-State Feature Gen');
+  print('  fex generate flavor   # (NEW) Android/iOS Flavor Setup');
   print('  fex ui --type <type>  # Premium UI Scaffold');
+  print('  fex env setup         # (NEW) Multi-Flavor Environment');
+  print('  fex l10n init         # (NEW) Localization setup');
+  print('  fex asset sync        # (NEW) Asset Pipeline');
+  print('  fex release patch     # (NEW) Version & Changelog');
+  print('  fex figma pull        # (NEW) Figma Theme Sync');
+  print('  fex deeplink check    # (NEW) Deep Link Validator');
   print('  fex localize          # AI Semantic Localization');
   print('\n💡 Options:');
   print('  --version             # Show FEX version');
