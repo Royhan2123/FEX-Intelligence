@@ -294,22 +294,30 @@ class SecurityPentestScanner {
       if (critical.isNotEmpty) {
         print('🚨 CRITICAL (${critical.length})');
         print('─' * 50);
-        for (final issue in critical) _printIssue(issue);
+        for (final issue in critical) {
+          _printIssue(issue);
+        }
       }
       if (high.isNotEmpty) {
         print('\n🔴 HIGH (${high.length})');
         print('─' * 50);
-        for (final issue in high) _printIssue(issue);
+        for (final issue in high) {
+          _printIssue(issue);
+        }
       }
       if (medium.isNotEmpty) {
         print('\n🟡 MEDIUM (${medium.length})');
         print('─' * 50);
-        for (final issue in medium) _printIssue(issue);
+        for (final issue in medium) {
+          _printIssue(issue);
+        }
       }
       if (low.isNotEmpty) {
         print('\n🟢 LOW (${low.length})');
         print('─' * 50);
-        for (final issue in low) _printIssue(issue);
+        for (final issue in low) {
+          _printIssue(issue);
+        }
       }
     }
 

@@ -80,7 +80,7 @@ class FexInspector extends Interceptor {
 
     var content = networkFile.readAsStringSync();
     if (!content.contains('FexInspector()')) {
-      content = "import 'fex_inspector.dart';\n" + content;
+      content = "import 'fex_inspector.dart';\n$content";
       content = content.replaceFirst('Dio(', 'Dio()..interceptors.add(FexInspector()) // ');
       networkFile.writeAsStringSync(content);
       print('✅ Advanced Inspector injected.');

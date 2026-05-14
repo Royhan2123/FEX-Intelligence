@@ -2,39 +2,39 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:args/args.dart';
 
-import '../lib/src/architecture_auditor.dart';
-import '../lib/src/component_generator.dart';
-import '../lib/src/crud_generator.dart';
-import '../lib/src/mock_server_generator.dart';
-import '../lib/src/rag_client_generator.dart';
-import '../lib/src/security_scanner.dart'; // Z3
-import '../lib/src/qa_agent.dart';        // Z5
-import '../lib/src/code_healer.dart';    // HEAL
-import '../lib/src/deps_doctor.dart';    // DEPS
-import '../lib/src/test_generator.dart'; // TEST
-import '../lib/src/global_modules.dart'; // GLOBAL MODULES
-import '../lib/src/next_level_modules.dart'; // GOD LEVEL MODULES
-import '../lib/src/evolve_engine.dart';      // EVOLVE ENGINE
-import '../lib/src/performance_surgeon.dart'; // PERFORMANCE & MONITOR
-import '../lib/src/log_injector.dart';      // LOG INJECTOR
-import '../lib/src/ai_engine.dart';         // STANDALONE AI
-import '../lib/src/model_generator.dart';    // MODEL GEN
-import '../lib/src/env_manager.dart';       // ENV
-import '../lib/src/signing_manager.dart';   // SIGN
-import '../lib/src/project_renamer.dart';   // RENAME
-import '../lib/src/permission_manager.dart'; // PERMISSION
-import '../lib/src/bootstrapper.dart';      // INIT
-import '../lib/src/icon_generator.dart';    // ICON
-import '../lib/src/splash_generator.dart';  // SPLASH
-import '../lib/src/cicd_manager.dart';      // CICD
-import '../lib/src/widget_generator.dart';  // WIDGET
-import '../lib/src/route_generator.dart';   // ROUTE
-import '../lib/src/flavor_generator.dart'; // FLAVOR
-import '../lib/src/asset_pipeline.dart';   // ASSET
-import '../lib/src/l10n_generator.dart';    // L10N
-import '../lib/src/figma_sync.dart';       // FIGMA
-import '../lib/src/release_generator.dart'; // RELEASE
-import '../lib/src/deeplink_validator.dart'; // DEEPLINK
+import 'package:fex_intelligence/src/architecture_auditor.dart';
+import 'package:fex_intelligence/src/component_generator.dart';
+import 'package:fex_intelligence/src/crud_generator.dart';
+import 'package:fex_intelligence/src/mock_server_generator.dart';
+import 'package:fex_intelligence/src/rag_client_generator.dart';
+import 'package:fex_intelligence/src/security_scanner.dart'; // Z3
+import 'package:fex_intelligence/src/qa_agent.dart';        // Z5
+import 'package:fex_intelligence/src/code_healer.dart';    // HEAL
+import 'package:fex_intelligence/src/deps_doctor.dart';    // DEPS
+import 'package:fex_intelligence/src/test_generator.dart'; // TEST
+import 'package:fex_intelligence/src/global_modules.dart'; // GLOBAL MODULES
+import 'package:fex_intelligence/src/evolve_engine.dart';      // EVOLVE ENGINE
+import 'package:fex_intelligence/src/performance_surgeon.dart'; // PERFORMANCE & MONITOR
+import 'package:fex_intelligence/src/log_injector.dart';      // LOG INJECTOR
+import 'package:fex_intelligence/src/ai_engine.dart';         // STANDALONE AI
+import 'package:fex_intelligence/src/model_generator.dart';    // MODEL GEN
+import 'package:fex_intelligence/src/env_manager.dart';       // ENV
+import 'package:fex_intelligence/src/signing_manager.dart';   // SIGN
+import 'package:fex_intelligence/src/project_renamer.dart';   // RENAME
+import 'package:fex_intelligence/src/permission_manager.dart'; // PERMISSION
+import 'package:fex_intelligence/src/bootstrapper.dart';      // INIT
+import 'package:fex_intelligence/src/icon_generator.dart';    // ICON
+import 'package:fex_intelligence/src/splash_generator.dart';  // SPLASH
+import 'package:fex_intelligence/src/cicd_manager.dart';      // CICD
+import 'package:fex_intelligence/src/widget_generator.dart';  // WIDGET
+import 'package:fex_intelligence/src/route_generator.dart';   // ROUTE
+import 'package:fex_intelligence/src/flavor_generator.dart'; // FLAVOR
+import 'package:fex_intelligence/src/asset_pipeline.dart';   // ASSET
+import 'package:fex_intelligence/src/l10n_generator.dart';    // L10N
+import 'package:fex_intelligence/src/figma_sync.dart';       // FIGMA
+import 'package:fex_intelligence/src/release_generator.dart'; // RELEASE
+import 'package:fex_intelligence/src/deeplink_validator.dart'; // DEEPLINK
+import 'package:fex_intelligence/src/team_simulation.dart';   // TEAM SIM
 
 void main(List<String> arguments) async {
   final parser = ArgParser();
@@ -180,8 +180,6 @@ void main(List<String> arguments) async {
       return;
     }
 
-    final ragUrl = 'http://localhost:8000';
-
     if (results.command?.name == 'config') {
       final key = results.command!['key'];
       if (key != null) {
@@ -209,16 +207,16 @@ void main(List<String> arguments) async {
     if (results.command?.name == 'evolve') {
       final from = results.command!['from'];
       final to = results.command!['to'];
-      await EvolveEngine.run(from, to, backendUrl: ragUrl);
+      await EvolveEngine.run(from, to);
       return;
     }
 
     if (results.command?.name == 'review') {
-      await TeamSimulation.run(ragUrl);
+      await TeamSimulation.run();
       return;
     }
     if (results.command?.name == 'compliance') {
-      await ComplianceEngine.run(ragUrl);
+      await ComplianceEngine.run();
       return;
     }
     if (results.command?.name == 'refactor') {
@@ -227,12 +225,12 @@ void main(List<String> arguments) async {
         print('Error: --file is required for refactor command');
         exit(1);
       }
-      await RefactorAgent.run(filePath, ragUrl);
+      await RefactorAgent.run(filePath);
       return;
     }
 
     if (results.command?.name == 'changelog') {
-      await ReleaseNoteGenerator.run(ragUrl);
+      await ChangelogAI.run();
       return;
     }
     if (results.command?.name == 'size') {
@@ -244,11 +242,11 @@ void main(List<String> arguments) async {
       return;
     }
     if (results.command?.name == 'migrate') {
-      await MigrateAssistant.run(ragUrl);
+      await MigrateAssist.run();
       return;
     }
     if (results.command?.name == 'localize') {
-      await Localizer.run(ragUrl);
+      await Localizer.run();
       return;
     }
     if (results.command?.name == 'perf') {
@@ -348,8 +346,11 @@ void main(List<String> arguments) async {
 
     if (results.command?.name == 'rename') {
       final name = results.command!['name'];
-      if (name != null) await ProjectRenamer.rename(name);
-      else print('Error: --name is required for rename');
+      if (name != null) {
+        await ProjectRenamer.rename(name);
+      } else {
+        print('Error: --name is required for rename');
+      }
       return;
     }
 
@@ -451,10 +452,8 @@ void main(List<String> arguments) async {
         final jsonData = jsonDecode(jsonFile.readAsStringSync());
         await ModelGenerator.generate(name, jsonData);
       } else if (genCommand?.name == 'ai') {
-        print('Enter RAG Backend URL (default: http://localhost:8000):');
-        String? url = stdin.readLineSync();
-        if (url == null || url.isEmpty) url = 'http://localhost:8000';
-        await RagClientGenerator.generate(url);
+        final name = genCommand!['name'] ?? 'RagClient';
+        await RagClientGenerator.generate(name);
       } else if (genCommand?.name == 'flavor') {
         if (genCommand!.command?.name == 'init') await FlavorGenerator.init();
       }

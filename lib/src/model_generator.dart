@@ -16,9 +16,9 @@ class ModelGenerator {
     });
     
     buffer.writeln('\n  $className({');
-    json.keys.forEach((key) {
+    for (var key in json.keys) {
       buffer.writeln('    required this.$key,');
-    });
+    }
     buffer.writeln('  });');
 
     // fromJson
@@ -92,7 +92,9 @@ class ModelGenerator {
       buffer.writeln('  final $finalType $key;');
     });
     buffer.writeln('\n  $className({');
-    json.keys.forEach((key) => buffer.writeln('    required this.$key,'));
+    for (var key in json.keys) {
+      buffer.writeln('    required this.$key,');
+    }
     buffer.writeln('  });\n');
     buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) => $className(');
     json.forEach((key, value) => buffer.writeln('    $key: json[\'$key\'],'));

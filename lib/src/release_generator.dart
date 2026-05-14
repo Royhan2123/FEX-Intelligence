@@ -24,9 +24,13 @@ class ReleaseGenerator {
       int patch = int.parse(match.group(3)!);
       int build = int.parse(match.group(4) ?? '0');
 
-      if (type == 'major') major++;
-      else if (type == 'minor') minor++;
-      else patch++;
+      if (type == 'major') {
+        major++;
+      } else if (type == 'minor') {
+        minor++;
+      } else {
+        patch++;
+      }
       
       build++;
 
@@ -48,7 +52,7 @@ class ReleaseGenerator {
       final oldContent = changelog.readAsStringSync();
       changelog.writeAsStringSync(newEntry + oldContent);
     } else {
-      changelog.writeAsStringSync('# CHANGELOG\n\n' + newEntry);
+      changelog.writeAsStringSync('# CHANGELOG\n\n$newEntry');
     }
     print('✅ CHANGELOG.md updated.');
   }

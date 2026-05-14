@@ -34,6 +34,8 @@ class FexInspector extends Interceptor {
       request.add(utf8.encode(jsonEncode(logData)));
       await request.close();
       client.close();
-    } catch (e) { }
+    } catch (e) {
+      // Network log failure is silent
+    }
   }
 }

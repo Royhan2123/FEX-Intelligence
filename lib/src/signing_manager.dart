@@ -79,7 +79,7 @@ android {
 ''';
 
     // Prepend to the file or inject at top of android block
-    gradleFile.writeAsStringSync(signingLogic + '\n' + content);
+    gradleFile.writeAsStringSync('$signingLogic\n$content');
     print('✅ Injected signing logic into android/app/build.gradle');
   }
 
