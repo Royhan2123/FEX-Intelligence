@@ -57,9 +57,9 @@ void main(List<String> arguments) async {
   evolveCommand.addOption('from', help: 'Source architecture', defaultsTo: 'getx');
   evolveCommand.addOption('to', help: 'Target architecture', defaultsTo: 'riverpod');
 
-  // --- COMMAND: GOD LEVEL INTELLIGENCE ---
+  // --- COMMAND: ARCHITECTURE INTELLIGENCE ---
   parser.addCommand('review');
-  parser.addCommand('compliance');
+  parser.addCommand('audit');
   final refactorCommand = parser.addCommand('refactor');
   refactorCommand.addOption('file', abbr: 'f', help: 'File to refactor');
 
@@ -142,8 +142,8 @@ void main(List<String> arguments) async {
   final healCommand = parser.addCommand('heal');
   healCommand.addOption('file', abbr: 'f', help: 'File path to heal');
   
-  // --- COMMAND: PENTEST (Z3) ---
-  parser.addCommand('pentest');
+  // --- COMMAND: SECURITY AUDIT ---
+  parser.addCommand('audit');
   
   // --- COMMAND: QA (Z5) ---
   parser.addCommand('qa');
@@ -176,7 +176,7 @@ void main(List<String> arguments) async {
 
     if (results['version'] == true) {
       print('╔══════════════════════════════════════════════════╗');
-      print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.9               ║');
+      print('║   🚀 FEX INTELLIGENCE v1.0.10                    ║');
       print('╚══════════════════════════════════════════════════╝');
       return;
     }
@@ -216,8 +216,8 @@ void main(List<String> arguments) async {
       await TeamSimulation.run();
       return;
     }
-    if (results.command?.name == 'compliance') {
-      await ComplianceEngine.run();
+    if (results.command?.name == 'audit') {
+      await SecurityPentestScanner.run();
       return;
     }
     if (results.command?.name == 'refactor') {
@@ -284,8 +284,8 @@ void main(List<String> arguments) async {
       return;
     }
 
-    // 🕵️ Run Z3: Security Pentest
-    if (results.command?.name == 'pentest') {
+    // 🕵️ Run Security Audit
+    if (results.command?.name == 'audit') {
       await SecurityPentestScanner.run();
       return;
     }
@@ -474,14 +474,13 @@ void main(List<String> arguments) async {
 
 void _printUsage() {
   print('╔══════════════════════════════════════════════════╗');
-  print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.9               ║');
-  print('║   The Intelligence Layer for Flutter             ║');
+  print('║   🚀 FEX INTELLIGENCE v1.0.10                    ║');
+  print('║   Advanced Architecture Layer for Flutter        ║');
   print('╚══════════════════════════════════════════════════╝');
-  print('\n🎯 CORE COMMANDS:');
-  print('  fex review            # AI Team Simulation (QA/Security/Arch)');
+  print('\n🎯 ARCHITECTURE INTELLIGENCE:');
+  print('  fex review            # Multi-Agent Analysis (QA/Security/Arch)');
   print('  fex evolve            # Architecture Migration Engine');
-  print('  fex pentest           # (Z3) Security Analysis');
-  print('  fex qa                # (Z5) Autonomous QA');
+  print('  fex audit             # Security & Compliance Scan');
   print('\n🩹 MAINTENANCE & DEBUGGING:');
   print('  fex heal --file <p>   # Self-Healing Refactoring');
   print('  fex log               # Inject VS Code Live Inspector');

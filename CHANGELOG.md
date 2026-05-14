@@ -1,3 +1,10 @@
+## [1.0.10] - 2026-05-14
+- **Major Rebranding**: Transitioned from "Hype-focused" marketing to "Enterprise Architecture Intelligence".
+- **Naming Sync**: Renamed `pentest` to `audit` to better reflect security and compliance auditing.
+- **Trust & Safety**: Implemented "Diff Preview" and "Interactive Patching" as the standard workflow for AI-driven commands (`heal`, `refactor`, `evolve`).
+- **Professionalized Documentation**: Completely rewritten README and Landing Page to focus on technical integrity and reliability.
+- **Refined UI**: Removed bombastic terminology in favor of professional, structural descriptions.
+
 ## [1.0.9] - 2026-05-14
 - Implemented a massive UI Component Library with 3 distinct design languages (Minimal, Glass, Bold).
 - Added support for `--style` flag in `fex ui` command.
