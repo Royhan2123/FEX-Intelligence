@@ -176,7 +176,7 @@ void main(List<String> arguments) async {
 
     if (results['version'] == true) {
       print('╔══════════════════════════════════════════════════╗');
-      print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.2               ║');
+      print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.9               ║');
       print('╚══════════════════════════════════════════════════╝');
       return;
     }
@@ -474,7 +474,7 @@ void main(List<String> arguments) async {
 
 void _printUsage() {
   print('╔══════════════════════════════════════════════════╗');
-  print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.0               ║');
+  print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.9               ║');
   print('║   The Intelligence Layer for Flutter             ║');
   print('╚══════════════════════════════════════════════════╝');
   print('\n🎯 CORE COMMANDS:');

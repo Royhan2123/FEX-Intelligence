@@ -96,7 +96,7 @@ FEX contains over 25+ powerful commands categorized by their impact.
 
 ## 📖 Full Documentation
 
-To view interactive tutorials, the real-time terminal showcase, and advanced setup guides, visit the official **[FEX Documentation Portal](https://fex-docs.vercel.app/)**.
+To view interactive tutorials, the real-time terminal showcase, and advanced setup guides, visit the official **[FEX Documentation Portal](https://fex-intelligence.vercel.app/)**.
 
 ## 📄 License
 
