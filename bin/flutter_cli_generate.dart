@@ -150,7 +150,7 @@ void main(List<String> arguments) async {
 
   // --- COMMAND: UI ---
   final uiCommand = parser.addCommand('ui');
-  uiCommand.addOption('type', abbr: 't', help: 'Type of UI (login, register, dashboard, splash)');
+  uiCommand.addOption('type', abbr: 't', help: 'Type of UI (login, register, dashboard, splash, forgot)');
   uiCommand.addOption('style', abbr: 's', help: 'UI Style (1, 2, or 3)', defaultsTo: '1');
 
   // --- COMMAND: GENERATE ---
@@ -412,6 +412,7 @@ void main(List<String> arguments) async {
       if (type == 'login') await ComponentGenerator.generateLogin(style: style);
       if (type == 'register') await ComponentGenerator.generateRegister(style: style);
       if (type == 'dashboard') await ComponentGenerator.generateDashboard(style: style);
+      if (type == 'forgot') await ComponentGenerator.generateForgotPassword();
       // if (type == 'splash') await ComponentGenerator.generateSplash(); // Keep legacy if needed
       return;
     }

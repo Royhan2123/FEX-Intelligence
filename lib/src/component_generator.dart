@@ -19,17 +19,27 @@ class ComponentGenerator {
     print('✅ Solid Login UI Style $style generated at $path');
   }
 
+  static Future<void> generateForgotPassword() async {
+    print('🚀 Generating Premium Forgot Password UI...');
+    final path = p.join(Directory.current.path, 'lib', 'features', 'auth', 'presentation', 'pages');
+    Directory(path).createSync(recursive: true);
+
+    File(p.join(path, 'forgot_password_page.dart')).writeAsStringSync(_forgotPasswordTemplate());
+    print('✅ Forgot Password UI generated at $path');
+  }
+
   static Future<void> generateRegister({int style = 1}) async {
     print('🚀 Overhauling Register UI with High-Fidelity Style $style...');
     final path = p.join(Directory.current.path, 'lib', 'features', 'auth', 'presentation', 'pages');
     Directory(path).createSync(recursive: true);
 
     String content = '';
-    switch (style) {
-      case 1: content = _registerStyle1(); break;
-      case 2: content = _registerStyle2(); break;
-      case 3: content = _registerStyle3(); break;
-      default: content = _registerStyle1();
+    if (style == 1) {
+      content = _registerStyle1();
+    } else if (style == 2) {
+      content = _registerStyle2();
+    } else {
+      content = _registerStyle3();
     }
 
     File(p.join(path, 'register_page.dart')).writeAsStringSync(content);
@@ -411,51 +421,71 @@ class LoginPage extends StatelessWidget {
 ''';
 
   // ===========================================================================
-  // REGISTER STYLES (Simplified summaries for brevity but still high quality)
+  // REGISTER STYLES
   // ===========================================================================
 
   static String _registerStyle1() => '''
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            const Text('Join Us', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
-            _input(Icons.person, 'Full Name'),
-            const SizedBox(height: 20),
-            _input(Icons.email, 'Email Address'),
-            const SizedBox(height: 20),
-            _input(Icons.lock, 'Password', isPass: true),
-            const SizedBox(height: 20),
-            _input(Icons.lock_clock, 'Confirm Password', isPass: true),
-            const SizedBox(height: 40),
-            _btn(context, 'CREATE ACCOUNT'),
-            const SizedBox(height: 30),
-            const Text('OR REGISTER WITH', style: TextStyle(color: Colors.grey, fontSize: 12)),
-            const SizedBox(height: 20),
-            _socials(),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [Color(0xFF6A11CB), Color(0xFF2575FC)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Create Account', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 32),
+                      _field('Full Name', Icons.person_outline),
+                      const SizedBox(height: 16),
+                      _field('Email', Icons.email_outlined),
+                      const SizedBox(height: 16),
+                      _field('Password', Icons.lock_outline, isPass: true),
+                      const SizedBox(height: 32),
+                      _submitBtn(),
+                      const SizedBox(height: 20),
+                      _socialRow(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _input(IconData i, String h, {bool isPass = false}) => TextField(obscureText: isPass, decoration: InputDecoration(prefixIcon: Icon(i), hintText: h, border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))));
-  Widget _btn(BuildContext c, String t) => SizedBox(width: double.infinity, height: 60, child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: Text(t)));
-  Widget _socials() => Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.g_mobiledata, size: 40, color: Colors.red), SizedBox(width: 30), Icon(Icons.apple, size: 40), SizedBox(width: 30), Icon(Icons.facebook, size: 40, color: Colors.blue)]);
+  Widget _field(String l, IconData i, {bool isPass = false}) => TextFormField(obscureText: isPass, decoration: InputDecoration(labelText: l, prefixIcon: Icon(i), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))));
+  Widget _submitBtn() => SizedBox(width: double.infinity, height: 55, child: ElevatedButton(onPressed: () => _formKey.currentState!.validate(), style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('REGISTER')));
+  Widget _socialRow() => Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.g_mobiledata, size: 40, color: Colors.red), const SizedBox(width: 20), const Icon(Icons.apple, size: 40)]);
 }
 ''';
 
   static String _registerStyle2() => '''
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -464,27 +494,39 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
+      backgroundColor: const Color(0xFF0F0F1A),
+      body: Stack(
         children: [
-          Container(
-            height: 280,
-            width: double.infinity,
-            decoration: const BoxDecoration(color: Colors.black, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100))),
-            child: const Center(child: Text('EXPLORE\\nNEW\\nREALMS', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 5))),
+          Positioned(top: -50, right: -50, child: Container(width: 200, height: 200, decoration: const BoxDecoration(color: Colors.cyanAccent, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.cyanAccent, blurRadius: 100)]))),
+          BackdropFilter(filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50), child: Container(color: Colors.transparent)),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(30),
+              child: Container(
+                padding: const EdgeInsets.all(30),
+                decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.white.withOpacity(0.1))),
+                child: Column(
+                  children: [
+                    const Text('JOIN MATRIX', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 4)),
+                    const SizedBox(height: 40),
+                    _neonInp('User Alias', Icons.face),
+                    const SizedBox(height: 20),
+                    _neonInp('Neural Link (Email)', Icons.alternate_email),
+                    const SizedBox(height: 20),
+                    _neonInp('Access Key', Icons.key, isPass: true),
+                    const SizedBox(height: 40),
+                    _btn(),
+                  ],
+                ),
+              ),
+            ),
           ),
-          Expanded(child: SingleChildScrollView(padding: const EdgeInsets.all(40), child: Column(children: [
-            _field('IDENTIFIER'),
-            _field('EMAIL_LINK'),
-            _field('SECURE_KEY', isPass: true),
-            const SizedBox(height: 50),
-            Container(width: double.infinity, height: 70, decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20)), child: const Center(child: Text('GENERATE ACCESS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2)))),
-          ])))
         ],
       ),
     );
   }
-  Widget _field(String l, {bool isPass = false}) => TextField(obscureText: isPass, decoration: InputDecoration(labelText: l, labelStyle: const TextStyle(letterSpacing: 2, fontSize: 12, fontWeight: FontWeight.bold)));
+  Widget _neonInp(String h, IconData i, {bool isPass = false}) => TextField(obscureText: isPass, style: const TextStyle(color: Colors.cyanAccent), decoration: InputDecoration(hintText: h, hintStyle: const TextStyle(color: Colors.white24), prefixIcon: Icon(i, color: Colors.cyanAccent), border: InputBorder.none, filled: true, fillColor: Colors.black26));
+  Widget _btn() => Container(width: double.infinity, height: 60, decoration: BoxDecoration(border: Border.all(color: Colors.cyanAccent), borderRadius: BorderRadius.circular(15)), child: const Center(child: Text('REGISTER', style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold))));
 }
 ''';
 
@@ -497,24 +539,72 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Container(decoration: const BoxDecoration(image: DecorationImage(image: NetworkImage('https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800&q=80'), fit: BoxFit.cover))),
-        Container(decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.black, Colors.black.withOpacity(0.3)], begin: Alignment.bottomCenter, end: Alignment.topCenter))),
-        Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text('BECOME ONE OF US', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 50),
-          _input('Display Name'),
-          const SizedBox(height: 15),
-          _input('Email'),
-          const SizedBox(height: 15),
-          _input('Password', isPass: true),
-          const SizedBox(height: 40),
-          Container(width: double.infinity, height: 60, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(50)), child: const Center(child: Text('JOIN THE CORE', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
-        ]))
-      ]),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Join Us.', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w900)),
+              const Text('Create a new account', style: TextStyle(color: Colors.grey, fontSize: 18)),
+              const Spacer(),
+              _inp('Full Name'),
+              const SizedBox(height: 15),
+              _inp('Email Address'),
+              const SizedBox(height: 15),
+              _inp('Password', isPass: true),
+              const SizedBox(height: 40),
+              _btn(),
+              const SizedBox(height: 20),
+              _socials(),
+              const Spacer(),
+            ],
+          ),
+        ),
+      ),
     );
   }
-  Widget _input(String t, {bool isPass = false}) => TextField(obscureText: isPass, style: const TextStyle(color: Colors.white), decoration: InputDecoration(hintText: t, hintStyle: const TextStyle(color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: const BorderSide(color: Colors.white))));
+  Widget _inp(String l, {bool isPass = false}) => TextField(obscureText: isPass, decoration: InputDecoration(labelText: l, border: const UnderlineInputBorder()));
+  Widget _btn() => SizedBox(width: double.infinity, height: 60, child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), child: const Text('Continue', style: TextStyle(color: Colors.white))));
+  Widget _socials() => Row(children: [Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.g_mobiledata, color: Colors.black), label: const Text('Google', style: TextStyle(color: Colors.black)))), const SizedBox(width: 15), Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.apple, color: Colors.black), label: const Text('Apple', style: TextStyle(color: Colors.black))))]);
+}
+''';
+
+  static String _forgotPasswordTemplate() => '''
+import 'package:flutter/material.dart';
+
+class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent, foregroundColor: Colors.black),
+      body: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Reset Password', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Enter your email and we will send you a reset link.', style: TextStyle(color: Colors.grey, fontSize: 16)),
+            const SizedBox(height: 40),
+            TextField(decoration: InputDecoration(labelText: 'Email Address', border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)))),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 60,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                child: const Text('SEND RESET LINK'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 ''';
 
