@@ -13,8 +13,9 @@ class AIEngine {
     final envKey = Platform.environment['GEMINI_API_KEY'];
     if (envKey != null) return envKey;
 
-    // 2. Cek dari file config lokal
-    final configFile = File(p.join(Directory.systemTemp.path, '.fex_config'));
+    // 2. C check from home directory config
+    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '';
+    final configFile = File(p.join(home, '.fex', '.fex_config'));
     if (configFile.existsSync()) {
       return configFile.readAsStringSync().trim();
     }
@@ -33,8 +34,12 @@ class AIEngine {
   }
 
   static Future<void> saveKey(String key) async {
-    final configFile = File(p.join(Directory.systemTemp.path, '.fex_config'));
-    configFile.writeAsStringSync(key);
-    print('✅ API Key saved successfully!');
+    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '';
+    final configDir = Directory(p.join(home, '.fex'));
+    if (!configDir.existsSync()) configDir.createSync();
+    
+    final configFile = File(p.join(configDir.path, '.fex_config'));
+    await configFile.writeAsString(key);
+    print('✅ API Key saved to ${configFile.path}');
   }
 }

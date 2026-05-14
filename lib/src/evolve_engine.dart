@@ -1,126 +1,44 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as p;
+import 'ai_engine.dart';
 
-// =============================================
-//  EvolveEngine - The Architecture Migrator
-// =============================================
 class EvolveEngine {
-  final String ragBackendUrl;
-
-  EvolveEngine({required this.ragBackendUrl});
-
-  // Metode statis untuk menjalankan evolusi dari CLI
-  static Future<void> run(String from, String to, {String backendUrl = 'http://localhost:8000'}) async {
-    final engine = EvolveEngine(ragBackendUrl: backendUrl);
-    await engine.evolveProject(from, to);
-  }
-
-  Future<void> evolveProject(String from, String to) async {
-    print('🧬 Starting Architecture Evolution: $from ➔ $to...');
+  static Future<void> run(String from, String to, {String? backendUrl}) async {
+    print('🧬 Evolving Architecture from $from to $to...');
     
-    final libDir = Directory(p.join(Directory.current.path, 'lib'));
-    if (!libDir.existsSync()) {
-      print('❌ lib/ folder not found. Pastikan kamu menjalankan ini di root project Flutter.');
-      return;
-    }
+    final libDir = Directory('lib');
+    if (!libDir.existsSync()) return;
 
-    // Scan file yang butuh evolusi (GetX -> Riverpod)
-    List<File> filesToEvolve = [];
-    await for (final f in libDir.list(recursive: true)) {
-      if (f is File && f.path.endsWith('.dart')) {
-        final content = f.readAsStringSync();
-        // Deteksi GetX (Target utama kita)
-        if (content.contains('GetxController') || 
-            content.contains('Get.find') || 
-            content.contains('GetView') || 
-            content.contains('.obs')) {
-          filesToEvolve.add(f);
-        }
-      }
-    }
+    final files = libDir.listSync(recursive: true).whereType<File>().where((f) => f.path.endsWith('.dart'));
 
-    if (filesToEvolve.isEmpty) {
-      print('ℹ️ No files found matching source architecture ($from).');
-      return;
-    }
-
-    print('🔍 Found ${filesToEvolve.length} files to evolve. Processing with AI...');
-
-    for (final file in filesToEvolve) {
-      final fileName = p.basename(file.path);
-      stdout.write('🧬 Evolving $fileName... ');
-      await _evolveFile(file, from, to);
-      print('DONE ✅');
-    }
-
-    print('\n✨ Evolution complete! ✨');
-    print('💡 REKOMENDASI:');
-    print('1. Tambahkan dependency "$to" di pubspec.yaml kamu.');
-    print('2. Jalankan "flutter pub get".');
-    print('3. Cek file yang sudah di-evolusi untuk memastikan logika bisnis tetap terjaga.');
-  }
-
-  Future<void> _evolveFile(File file, String from, String to) async {
-    try {
+    for (var file in files) {
+      print('Transforming ${file.path}...');
       final code = file.readAsStringSync();
       
       final prompt = '''
-Kamu adalah senior Flutter Architect. Tugasmu adalah mengubah arsitektur kode berikut:
-DARI: $from (GetX)
-KE: $to (Riverpod)
+Kamu adalah senior Flutter Architect. Ubah arsitektur kode berikut dari $from menjadi $to.
+Pertahankan semua business logic. HANYA berikan kode hasil transformasi tanpa penjelasan.
 
-ATURAN KONVERSI:
-1. GetxController -> AsyncNotifier atau StateNotifier.
-2. RxInt, RxString, .obs -> Gunakan StateProvider atau StateNotifier.
-3. Get.find() -> ref.watch() atau ref.read().
-4. GetView -> ConsumerWidget.
-5. Obx() atau GetX() -> Consumer atau ref.watch.
-6. Update semua import yang relevan.
-
-Berikan HANYA kode lengkap yang sudah di-refactor, tanpa penjelasan tambahan.
-
-KODE ASLI:
+KODE:
 $code
 ''';
 
-      final res = await http.post(
-        Uri.parse('$ragBackendUrl/chat'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'question': prompt,
-          'chat_history': [],
-        }),
-      ).timeout(const Duration(seconds: 60));
-
-      if (res.statusCode == 200) {
-        final body = jsonDecode(res.body);
-        var evolvedCode = body['answer'] as String;
+      try {
+        final evolvedCodeRaw = await AIEngine.ask(prompt);
+        var evolvedCode = evolvedCodeRaw;
         
-        // Bersihkan kode dari markdown
-        evolvedCode = _extractCode(evolvedCode);
+        if (evolvedCode.contains('```dart')) {
+          evolvedCode = evolvedCode.split('```dart')[1].split('```')[0].trim();
+        }
 
-        // Timpa file asli dengan kode baru
+        // Backup
+        File('${file.path}.bak').writeAsStringSync(code);
+        
         file.writeAsStringSync(evolvedCode);
-      }
-    } catch (e) {
-      print('\n⚠️ Failed to evolve ${p.basename(file.path)}: $e');
-    }
-  }
-
-  String _extractCode(String text) {
-    if (text.contains('```dart')) {
-      final parts = text.split('```dart');
-      if (parts.length > 1) {
-        return parts[1].split('```')[0].trim();
-      }
-    } else if (text.contains('```')) {
-      final parts = text.split('```');
-      if (parts.length > 1) {
-        return parts[1].trim();
+      } catch (e) {
+        print('❌ Failed to evolve ${file.path}: $e');
       }
     }
-    return text.trim();
+    
+    print('✅ Architecture evolution complete! Backups created for all files.');
   }
 }

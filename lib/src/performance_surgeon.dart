@@ -1,111 +1,63 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+import 'ai_engine.dart';
 
 class PerformanceSurgeon {
-  final String ragBackendUrl;
-
-  PerformanceSurgeon({this.ragBackendUrl = 'http://localhost:8000'});
-
-  // =============================================
-  // ⚡ FEX OPTIMIZE (AI Performance Surgeon)
-  // =============================================
-  static Future<void> optimizeProject({String backendUrl = 'http://localhost:8000'}) async {
-    final surgeon = PerformanceSurgeon(ragBackendUrl: backendUrl);
+  static Future<void> optimizeProject() async {
     print('⚡ AI Performance Surgeon: Starting surgical optimization...');
     
     final libDir = Directory('lib');
-    int optimizedCount = 0;
+    if (!libDir.existsSync()) return;
 
-    await for (final file in libDir.list(recursive: true)) {
-      if (file is File && file.path.endsWith('.dart')) {
-        final content = file.readAsStringSync();
+    final files = libDir.listSync(recursive: true).whereType<File>().where((f) => f.path.endsWith('.dart'));
+
+    for (var file in files) {
+      final content = file.readAsStringSync();
+      
+      // Look for common performance smells
+      if (content.contains('ListView(') || content.contains('setState(()')) {
+        print('⚡ Optimizing ${p.basename(file.path)}...');
         
-        // Scan for performance smells (Nested ListViews, missing const, etc.)
-        if (content.contains('ListView(') || content.contains('setState(()') || content.length > 500) {
-          stdout.write('⚡ Optimizing ${p.basename(file.path)}... ');
-          await surgeon._optimizeFile(file);
-          optimizedCount++;
-          print('DONE ✅');
+        final prompt = '''
+Kamu adalah Senior Flutter Performance Expert. Optimalkan kode berikut untuk performa maksimal (gunakan const, kurangi rebuild, optimalkan ListView).
+Berikan HANYA kode hasil optimasi tanpa penjelasan.
+
+KODE:
+$content
+''';
+
+        try {
+          final optimizedCodeRaw = await AIEngine.ask(prompt);
+          var optimizedCode = optimizedCodeRaw;
+          if (optimizedCode.contains('```dart')) {
+            optimizedCode = optimizedCode.split('```dart')[1].split('```')[0].trim();
+          }
+          
+          // Backup
+          File('${file.path}.bak').writeAsStringSync(content);
+          file.writeAsStringSync(optimizedCode);
+        } catch (e) {
+          print('❌ Failed to optimize ${file.path}: $e');
         }
       }
     }
-    print('\n🏁 Optimization Complete! $optimizedCount files surgically enhanced.');
-    print('⚡ Estimated Rebuild Reduction: 40-60%');
+    print('✅ Performance optimization complete!');
   }
 
-  Future<void> _optimizeFile(File file) async {
-    final code = file.readAsStringSync();
-    final prompt = '''
-Kamu adalah senior Flutter Performance Engineer. Optimalkan kode berikut untuk performa maksimal.
-Fokus pada:
-1. Kurangi rebuild berlebihan (gunakan const, pecah widget kecil).
-2. Optimalkan ListView (pastikan pakai itemBuilder).
-3. Pindahkan logika berat keluar dari build() method.
-4. Gunakan memoization jika perlu.
-
-Berikan HANYA kode yang sudah dioptimalkan.
-
-KODE:
-$code
-''';
-
-    try {
-      final res = await http.post(
-        Uri.parse('$ragBackendUrl/chat'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'question': prompt, 'chat_history': []}),
-      ).timeout(const Duration(seconds: 45));
-
-      if (res.statusCode == 200) {
-        final fixedCode = _extractCode(jsonDecode(res.body)['answer']);
-        file.writeAsStringSync(fixedCode);
-      }
-    } catch (_) {}
-  }
-
-  // =============================================
-  // 🔥 FEX MONITOR (Real-Time AI Debugger)
-  // =============================================
-  static Future<void> monitorLive({String backendUrl = 'http://localhost:8000'}) async {
-    print('🔥 FEX MONITOR: Connecting to Dart VM Service...');
-    print('📡 Waiting for app events (Crashes, Jank, Memory Leaks)...');
+  static Future<void> monitorLive() async {
+    print('🩺 [FEX SURGEON] Starting Live Performance Monitoring...');
+    print('ℹ️ NOTE: This mode is currently in Simulation Mode for demonstration.');
     
-    // Di sini kita mensimulasikan koneksi ke VM Service (Observatory)
-    // Dalam implementasi nyata, kita menggunakan package 'vm_service'
+    await Future.delayed(Duration(seconds: 2));
+    print('✅ Connected! Monitoring process [PID: $pid]');
     
-    print('✅ Connected! Monitoring process [PID: ${pid}]');
-    
-    // Simulasi deteksi error
     await Future.delayed(Duration(seconds: 2));
     print('\n🚨 [CRASH DETECTED] Null check operator used on a null value');
     print('📄 File: home_controller.dart:45');
     
     print('🧠 AI SURGEON: Analyzing Root Cause...');
-    final surgeon = PerformanceSurgeon(ragBackendUrl: backendUrl);
-    await surgeon._analyzeCrash(
-      "Null check operator used on a null value at home_controller.dart:45",
-      "void fetchData() { var data = getFromStorage()!; print(data.name); }"
-    );
-  }
-
-  Future<void> _analyzeCrash(String error, String snippet) async {
-    final prompt = 'Analisis error berikut dan berikan PATCH (perbaikan) kodenya:\nError: $error\nSnippet: $snippet';
-    final res = await http.post(
-      Uri.parse('$ragBackendUrl/chat'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'question': prompt, 'chat_history': []}),
-    );
-
-    if (res.statusCode == 200) {
-      print('\n🛠️ AI ROOT CAUSE & PATCH:');
-      print(jsonDecode(res.body)['answer']);
-    }
-  }
-
-  static String _extractCode(String text) {
-    if (text.contains('```dart')) return text.split('```dart')[1].split('```')[0].trim();
-    return text.trim();
+    final prompt = 'Jelaskan penyebab crash "Null check operator used on a null value" pada baris "var d = storage.get()!;" dan berikan solusinya.';
+    final analysis = await AIEngine.ask(prompt);
+    print('\n📝 AI ANALYSIS:\n$analysis');
   }
 }

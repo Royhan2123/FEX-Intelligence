@@ -1,84 +1,43 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+import 'ai_engine.dart';
 
 class CodeHealer {
-  final String ragBackendUrl;
-
-  CodeHealer({this.ragBackendUrl = 'http://localhost:8000'});
-
-  static Future<void> run(String filePath, {String backendUrl = 'http://localhost:8000'}) async {
-    final healer = CodeHealer(ragBackendUrl: backendUrl);
-    await healer._healFile(filePath);
-  }
-
-  Future<void> _healFile(String filePath) async {
+  static Future<void> run(String filePath) async {
     final file = File(filePath);
     if (!file.existsSync()) {
-      print('❌ File tidak ditemukan: $filePath');
+      print('❌ File not found: $filePath');
       return;
     }
 
-    print('🩹 Attempting to heal: ${p.basename(filePath)}...');
-    print('🧠 Sending to AI for surgery...');
-
+    print('🩹 AI is performing surgery on: ${p.basename(filePath)}...');
+    
     try {
-      final originalCode = file.readAsStringSync();
-      
+      final code = file.readAsStringSync();
       final prompt = '''
-Kamu adalah senior Flutter developer. Tugasmu adalah memperbaiki (HEAL) kode berikut.
-Fokus pada:
-1. Tambahkan try-catch pada setiap network call/async operation.
-2. Perbaiki penamaan file/variabel agar sesuai standar Flutter (snake_case untuk file, camelCase untuk variabel).
-3. Pastikan semua controller memiliki method dispose()/onClose().
-4. Perbaiki bug potensial lainnya.
-
-Berikan HANYA kode lengkap yang sudah diperbaiki, tanpa penjelasan apapun sebelum atau sesudah kode.
+Kamu adalah AI Senior Flutter Developer. Perbaiki error, bug, atau unhandled exception pada kode berikut.
+Pastikan kode hasil perbaikan aman, clean, dan mengikuti best practice.
+Berikan HANYA kode yang sudah diperbaiki tanpa penjelasan.
 
 KODE ASLI:
-$originalCode
+$code
 ''';
 
-      final response = await http.post(
-        Uri.parse('$ragBackendUrl/chat'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'question': prompt,
-          'chat_history': [],
-        }),
-      ).timeout(const Duration(seconds: 45));
+      final healedCodeRaw = await AIEngine.ask(prompt);
+      var healedCode = healedCodeRaw;
 
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-        var fixedCode = body['answer'] as String;
-
-        // Clean up markdown code blocks if present
-        fixedCode = _extractCode(fixedCode);
-
-        // Overwrite the file
-        file.writeAsStringSync(fixedCode);
-        
-        print('✅ File ${p.basename(filePath)} successfully HEALED!');
-        print('📝 Changes applied. Silakan periksa kodenya.');
-      } else {
-        print('❌ AI Backend error: ${response.statusCode}');
+      if (healedCode.contains('```dart')) {
+        healedCode = healedCode.split('```dart')[1].split('```')[0].trim();
       }
-    } catch (e) {
-      print('❌ Gagal melakukan healing: $e');
-    }
-  }
 
-  String _extractCode(String text) {
-    if (text.contains('```dart')) {
-      final start = text.indexOf('```dart') + 7;
-      final end = text.lastIndexOf('```');
-      return text.substring(start, end).trim();
-    } else if (text.contains('```')) {
-      final start = text.indexOf('```') + 3;
-      final end = text.lastIndexOf('```');
-      return text.substring(start, end).trim();
+      // Create backup before overwrite
+      final backupFile = File('$filePath.bak');
+      backupFile.writeAsStringSync(code);
+      
+      file.writeAsStringSync(healedCode);
+      print('✅ Code healed successfully! Backup created at $filePath.bak');
+    } catch (e) {
+      print('❌ Healing failed: $e');
     }
-    return text.trim();
   }
 }

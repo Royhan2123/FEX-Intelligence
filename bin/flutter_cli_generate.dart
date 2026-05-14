@@ -20,6 +20,15 @@ import '../lib/src/log_injector.dart';      // LOG INJECTOR
 import '../lib/src/ai_engine.dart';         // STANDALONE AI
 import '../lib/src/model_generator.dart';    // MODEL GEN
 import '../lib/src/env_manager.dart';       // ENV
+import '../lib/src/signing_manager.dart';   // SIGN
+import '../lib/src/project_renamer.dart';   // RENAME
+import '../lib/src/permission_manager.dart'; // PERMISSION
+import '../lib/src/bootstrapper.dart';      // INIT
+import '../lib/src/icon_generator.dart';    // ICON
+import '../lib/src/splash_generator.dart';  // SPLASH
+import '../lib/src/cicd_manager.dart';      // CICD
+import '../lib/src/widget_generator.dart';  // WIDGET
+import '../lib/src/route_generator.dart';   // ROUTE
 import '../lib/src/flavor_generator.dart'; // FLAVOR
 import '../lib/src/asset_pipeline.dart';   // ASSET
 import '../lib/src/l10n_generator.dart';    // L10N
@@ -30,7 +39,9 @@ import '../lib/src/deeplink_validator.dart'; // DEEPLINK
 void main(List<String> arguments) async {
   final parser = ArgParser();
 
-  // --- COMMAND: CONFIGURATION ---
+  // --- COMMAND: GLOBAL CONFIG ---
+  parser.addFlag('version', abbr: 'v', negatable: false, help: 'Show FEX version');
+  
   final configCommand = parser.addCommand('config');
   configCommand.addOption('key', help: 'Set your Gemini API Key');
 
@@ -85,6 +96,40 @@ void main(List<String> arguments) async {
   final deeplinkCommand = parser.addCommand('deeplink');
   deeplinkCommand.addCommand('check');
 
+  // --- THE HIGH IMPACT TRIO ---
+  final signCommand = parser.addCommand('sign');
+  signCommand.addOption('alias', abbr: 'a', help: 'Key Alias', defaultsTo: 'upload');
+  signCommand.addOption('pass', abbr: 'p', help: 'Key Password', defaultsTo: 'password123');
+
+  final renameCommand = parser.addCommand('rename');
+  renameCommand.addOption('name', help: 'New package name (e.g. com.company.app)');
+
+  final permissionCommand = parser.addCommand('permission');
+  permissionCommand.addOption('add', help: 'Comma separated permissions (camera,location,microphone)');
+
+  // --- NEW COMMANDS FROM ROADMAP ---
+  final initCommand = parser.addCommand('init');
+  initCommand.addOption('name', help: 'Project Name');
+  initCommand.addOption('arch', help: 'Architecture (clean)', defaultsTo: 'clean');
+
+  final iconCommand = parser.addCommand('icon');
+  iconCommand.addOption('set', help: 'Path to source icon');
+
+  final splashCommand = parser.addCommand('splash');
+  splashCommand.addOption('set', help: 'Path to source splash image');
+  splashCommand.addOption('color', help: 'Background color', defaultsTo: '#FFFFFF');
+
+  final cicdCommand = parser.addCommand('cicd');
+  cicdCommand.addOption('provider', help: 'CI/CD Provider (github)', defaultsTo: 'github');
+
+  final widgetCommand = parser.addCommand('widget');
+  widgetCommand.addOption('name', help: 'Widget Name');
+  widgetCommand.addOption('type', help: 'Type (stateless, stateful)', defaultsTo: 'stateless');
+
+  final routeCommand = parser.addCommand('route');
+  routeCommand.addOption('path', help: 'Route path');
+  routeCommand.addOption('screen', help: 'Screen name');
+
   // --- COMMAND: TEST (AI TEST GENERATOR) ---
   final testCommand = parser.addCommand('test');
   testCommand.addOption('file', abbr: 'f', help: 'File to generate tests for');
@@ -128,6 +173,13 @@ void main(List<String> arguments) async {
   try {
     final results = parser.parse(arguments);
 
+    if (results['version'] == true) {
+      print('╔══════════════════════════════════════════════════╗');
+      print('║   🚀 FLUTTER ENGINE-X (FEX) v1.0.2               ║');
+      print('╚══════════════════════════════════════════════════╝');
+      return;
+    }
+
     final ragUrl = 'http://localhost:8000';
 
     if (results.command?.name == 'config') {
@@ -146,11 +198,11 @@ void main(List<String> arguments) async {
     }
 
     if (results.command?.name == 'monitor') {
-      await PerformanceSurgeon.monitorLive(backendUrl: ragUrl);
+      await PerformanceSurgeon.monitorLive();
       return;
     }
     if (results.command?.name == 'optimize') {
-      await PerformanceSurgeon.optimizeProject(backendUrl: ragUrl);
+      await PerformanceSurgeon.optimizeProject();
       return;
     }
 
@@ -287,6 +339,70 @@ void main(List<String> arguments) async {
       return;
     }
 
+    if (results.command?.name == 'sign') {
+      final alias = results.command!['alias'];
+      final pass = results.command!['pass'];
+      await SigningManager.generate(alias, pass);
+      return;
+    }
+
+    if (results.command?.name == 'rename') {
+      final name = results.command!['name'];
+      if (name != null) await ProjectRenamer.rename(name);
+      else print('Error: --name is required for rename');
+      return;
+    }
+
+    if (results.command?.name == 'permission') {
+      final perms = results.command!['add'];
+      if (perms != null) {
+        await PermissionManager.add(perms.split(','));
+      } else {
+        print('Usage: fex permission --add camera,location');
+      }
+      return;
+    }
+
+    if (results.command?.name == 'init') {
+      final name = results.command!['name'] ?? 'fex_project';
+      final arch = results.command!['arch'] ?? 'clean';
+      await ProjectBootstrapper.init(name, arch);
+      return;
+    }
+
+    if (results.command?.name == 'icon') {
+      final path = results.command!['set'];
+      if (path != null) await IconGenerator.setIcon(path);
+      return;
+    }
+
+    if (results.command?.name == 'splash') {
+      final path = results.command!['set'];
+      final color = results.command!['color'] ?? '#FFFFFF';
+      if (path != null) await SplashGenerator.setSplash(path, color: color);
+      return;
+    }
+
+    if (results.command?.name == 'cicd') {
+      final provider = results.command!['provider'] ?? 'github';
+      await CicdManager.init(provider);
+      return;
+    }
+
+    if (results.command?.name == 'widget') {
+      final name = results.command!['name'];
+      final type = results.command!['type'] ?? 'stateless';
+      if (name != null) await WidgetGenerator.create(name, type);
+      return;
+    }
+
+    if (results.command?.name == 'route') {
+      final path = results.command!['path'];
+      final screen = results.command!['screen'];
+      if (path != null && screen != null) await RouteGenerator.add(path, screen);
+      return;
+    }
+
     if (results.command?.name == 'ui') {
       final type = results.command!['type'];
       if (type == 'login') await ComponentGenerator.generateLogin();
@@ -313,7 +429,10 @@ void main(List<String> arguments) async {
 
         final jsonFile = File(path);
         final jsonData = jsonDecode(jsonFile.readAsStringSync());
-        await CrudGenerator.generate(name, jsonData, state);
+        
+        // Fix: Explicitly handle GetX default
+        final effectiveState = state ?? 'getx';
+        await CrudGenerator.generate(name, jsonData, effectiveState);
       } else if (genCommand?.name == 'model') {
         final name = genCommand!['name'];
         final path = genCommand['path'];
@@ -373,6 +492,15 @@ void _printUsage() {
   print('  fex release patch     # (NEW) Version & Changelog');
   print('  fex figma pull        # (NEW) Figma Theme Sync');
   print('  fex deeplink check    # (NEW) Deep Link Validator');
+  print('  fex sign --alias <a>  # (HOT) Android Keystore Manager');
+  print('  fex rename --name <n> # (HOT) Project Package Renamer');
+  print('  fex permission --add  # (HOT) Sync Android/iOS Permissions');
+  print('  fex init --name <n>   # (NEW) Project Bootstrapper');
+  print('  fex icon --set <p>    # (NEW) App Icon Generator');
+  print('  fex splash --set <p>  # (NEW) Native Splash Screen');
+  print('  fex cicd init         # (NEW) CI/CD Pipeline Generator');
+  print('  fex widget --name <n> # (NEW) Custom Widget Generator');
+  print('  fex route --path <p>  # (NEW) Route Generator');
   print('  fex localize          # AI Semantic Localization');
   print('\n💡 Options:');
   print('  --version             # Show FEX version');

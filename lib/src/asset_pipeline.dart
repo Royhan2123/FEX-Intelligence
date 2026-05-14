@@ -8,10 +8,14 @@ class AssetPipeline {
     final assetDir = Directory('assets');
     if (!assetDir.existsSync()) {
       assetDir.createSync();
-      print('ℹ️ Created assets/ directory.');
     }
 
     final assets = _listAssets(assetDir);
+    if (assets.isEmpty) {
+      print('ℹ️ No assets found in assets/ folder.');
+      return;
+    }
+
     await _updatePubspec(assets);
     await _generateDartClass(assets);
     
@@ -30,41 +34,42 @@ class AssetPipeline {
     if (!pubspec.existsSync()) return;
 
     var lines = pubspec.readAsLinesSync();
-    var newLines = <String>[];
-    bool inAssets = false;
-    bool assetsProcessed = false;
+    
+    int flutterIndex = -1;
+    int assetsIndex = -1;
 
-    for (var line in lines) {
-      if (line.trim() == 'assets:') {
-        inAssets = true;
-        newLines.add(line);
-        for (var asset in assets) {
-          newLines.add('    - $asset');
-        }
-        assetsProcessed = true;
-        continue;
-      }
-
-      if (inAssets && (line.startsWith('  -') || line.trim().isEmpty)) {
-        continue; // Skip old asset lines
-      } else {
-        inAssets = false;
-      }
-
-      newLines.add(line);
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].trim() == 'flutter:') flutterIndex = i;
+      if (lines[i].trim() == 'assets:') assetsIndex = i;
     }
 
-    // If no assets section found, add it
-    if (!assetsProcessed) {
-      newLines.add('\nflutter:');
-      newLines.add('  assets:');
+    if (assetsIndex != -1) {
+      // Remove old assets section
+      int endAssets = assetsIndex + 1;
+      while (endAssets < lines.length && (lines[endAssets].trim().startsWith('-') || lines[endAssets].trim().isEmpty)) {
+        endAssets++;
+      }
+      lines.removeRange(assetsIndex, endAssets);
+    }
+
+    // Re-find flutter index after removal
+    flutterIndex = lines.indexWhere((l) => l.trim() == 'flutter:');
+
+    if (flutterIndex != -1) {
+      lines.insert(flutterIndex + 1, '  assets:');
+      for (int i = 0; i < assets.length; i++) {
+        lines.insert(flutterIndex + 2 + i, '    - ${assets[i]}');
+      }
+    } else {
+      lines.add('\nflutter:');
+      lines.add('  assets:');
       for (var asset in assets) {
-        newLines.add('    - $asset');
+        lines.add('    - $asset');
       }
     }
 
-    pubspec.writeAsStringSync(newLines.join('\n'));
-    print('✅ pubspec.yaml updated with ${assets.length} assets.');
+    pubspec.writeAsStringSync(lines.join('\n'));
+    print('✅ pubspec.yaml updated.');
   }
 
   static Future<void> _generateDartClass(List<String> assets) async {
@@ -76,12 +81,11 @@ class AssetPipeline {
     buffer.writeln('class AppAssets {');
     
     for (var asset in assets) {
-      final fileName = p.basenameWithoutExtension(asset).replaceAll('-', '_').replaceAll(' ', '_');
+      final fileName = p.basenameWithoutExtension(asset).replaceAll('-', '_').replaceAll(' ', '_').toLowerCase();
       buffer.writeln('  static const String $fileName = \'$asset\';');
     }
     
     buffer.writeln('}');
     file.writeAsStringSync(buffer.toString());
-    print('✅ lib/core/constants/app_assets.dart generated.');
   }
 }
